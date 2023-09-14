@@ -5,18 +5,19 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
-
 // const fetchPostsBtn = document.querySelector(".btn");
 // const postList = document.querySelector(".posts");
 // const alertPopup = document.querySelector(".alert");
 // let isAlertVisible = false;
 
-// // Controls the group number
-// let page = 1;
-// // Controls the number of items in the group
-// let limit = 5;
+// Controls the group number
+let page = 1;
+// Controls the number of items in the group
+let per_page = 5;
 // // In our case total number of pages is calculated on frontend
 // const totalPages = 100 / limit;
+let query;
+
 
 // fetchPostsBtn.addEventListener("click", () => {
 //   // Check the end of the collection to display an alert
@@ -41,14 +42,21 @@ const refs = {
 refs.searchForm.addEventListener('submit', onSearch);
 
 function onSearch(e) {
-  e.preventDefault();
-
-  // console.log(fetchPhotos());
+    e.preventDefault();     
+    // console.dir(e.currentTarget.elements.searchQuery.value);
+    // const { searchQuery: { value } } = e.currentTarget.elements;
+    query = e.currentTarget.elements.searchQuery.value;
+    // console.log(searchQuery);
+     
+    if (!query) {
+        alert(`Pole puste`);
+        return;
+    }  
 
   fetchPhotos()
     .then(data => {
-      console.log(data.hits);
-      renderPosts(data.hits);
+      console.log(data);
+      renderHits(data.hits);
       //   // Increase the group number
       //   page += 1;
 
@@ -59,6 +67,14 @@ function onSearch(e) {
     })
     .catch(error => console.log(error));
 }
+
+// refs.loadMoreBtn.addEventListener('click', onLoad);
+
+// function onLoad {
+//     page += 1;
+
+//     fetchPhotos(page).then(data)
+// }
 
 // function fetchPosts() {
 //   const params = new URLSearchParams({
@@ -76,33 +92,34 @@ function onSearch(e) {
 //   );
 // }
 
- function fetchPhotos() {
-    
-        const BASE_URL = 'https://pixabay.com/api';
-        const API_KEY = '39342201-f813eddd1adb93dcbf05db88a';
+ function fetchPhotos() {     
+        const BASE_URL = 'https://pixabay.com/api';         
         const params = new URLSearchParams({
-            per_page: 3,
-            page: 1
-        });
-        
-        const url = `${BASE_URL}/?key=${API_KEY}&
-    q=yellow+flower&image_type=photo&orientation=horizontal&
-    safesearch=true&${params}`;
-
+            key: '39342201-f813eddd1adb93dcbf05db88a',
+            q: query,
+            image_type: "photo",
+            orientation: "horizontal",
+            safesearch: true,
+            per_page,
+            page
+        });         
+    //     const url = `${BASE_URL}/?key=${API_KEY}&
+    // q=yellow+flower&image_type=photo&orientation=horizontal&
+    // safesearch=true&${params}`;
+      const url = `${BASE_URL}/?${params}`; 
         return fetch(url)
             .then(
                 (response) => {
                     if (!response.ok) {
-                        throw new Error(response.status);
+                        throw new Error(response.status); 
                     }
                    
-                    return response.json();
-                    
+                    return response.json();                     
                 });
     }
 
 
-function renderPosts(arr) { 
+function renderHits(arr) { 
     const markup = arr
     .map(
         item => {
