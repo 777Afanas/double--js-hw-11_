@@ -2,7 +2,6 @@
     box-sizing: border-box;
 }
 
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
         Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
@@ -12,18 +11,12 @@ body {
     color: #212121;
     line-height: 1.5;
 }
-
-
-img {
+ 
+ img {
     display: block;
-    max-width: 30%;
-}
-
-.gallery {
-    display: flex;
-    gap: 10px;
-    margin: 0 auto;
-}
+    max-width: 50%;
+    height: auto;
+} 
 
 .search-form {
     display: flex;
@@ -37,3 +30,9 @@ img {
     margin-left: auto;
     margin-right: auto;
 }
+
+/* .gallery {
+    display: flex;
+    gap: 10px;
+    margin: 0 auto;
+} */
