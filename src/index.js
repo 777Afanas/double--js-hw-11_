@@ -1,5 +1,3 @@
-
-
 const refs = {
   searchForm: document.querySelector('.search-form'),
   photosContainer: document.querySelector('.gallery'),
@@ -11,9 +9,11 @@ const refs = {
 let page = 1;
 // Controls the number of items in the group
 let per_page = 40;
+// let totalHits;
 // // In our case total number of pages is calculated on frontend
 // const totalPages = 100 / limit;
-let query; 
+let query;
+refs.loadMoreBtn.classList.add('is-hidden');
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadMoreBtn.addEventListener('click', onLoad);
@@ -21,7 +21,10 @@ refs.loadMoreBtn.addEventListener('click', onLoad);
 function onSearch(e) {
   e.preventDefault();
 
-  clearPhotosContainer();
+  refs.loadMoreBtn.classList.add('is-hidden');
+
+ clearPhotosContainer();
+
   page = 1;
   query = e.currentTarget.elements.searchQuery.value;
 
@@ -31,7 +34,7 @@ function onSearch(e) {
   }
 
   fetchPhotos()
-      .then(data => {     
+    .then(data => {
       if (data.hits.length == 0) {
         alert(`Sorry, there are no images matching your 
               search query. Please try again`);
@@ -41,6 +44,8 @@ function onSearch(e) {
       renderHits(data.hits);
     })
     .catch(error => console.log(error));
+
+  refs.loadMoreBtn.classList.remove('is-hidden');
 }
 
 function onLoad() {
@@ -48,8 +53,15 @@ function onLoad() {
 
   fetchPhotos()
     .then(data => {
-      console.log(data);
-      renderHits(data.hits);
+        console.log(data.totalHits);
+      if ((page - 1) > data.totalHits/per_page) {
+        alert(`We're sorry, but you've reached the end of 
+         search results.`);
+        return;
+      }
+
+        renderHits(data.hits);  
+
     })
     .catch(error => console.log(error));
 }
@@ -68,8 +80,8 @@ function fetchPhotos() {
   //     const url = `${BASE_URL}/?key=${API_KEY}&
   // q=yellow+flower&image_type=photo&orientation=horizontal&
   // safesearch=true&${params}`;
-    const url = `${BASE_URL}/?${params}`;
-    console.log(url);
+  const url = `${BASE_URL}/?${params}`;
+  console.log(url);
   return fetch(url).then(response => {
     if (!response.ok) {
       throw new Error(response.status);
